@@ -28,8 +28,8 @@
     "sprites": {
         "spritesheet": {
             "src": "sources/assets/images/spritesheet/*.png",
-            "destImg": "deploy/assets/images/spritesheet.png",
-            "destCSS": "sources/assets/css/spritesheet.styl",
+            "dest": "deploy/assets/images/spritesheet.png",
+            "destCss": "sources/assets/css/spritesheet.styl",
             "cssTemplate": "sources/assets/css/spritesheet.styl.tpl",
             "padding": 10,
             "algorithm": "binary-tree",
