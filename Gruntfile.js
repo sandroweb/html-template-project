@@ -193,11 +193,6 @@ module.exports = function (grunt) {
         },
 
         watch: {
-            options: {
-                dateFormat: function () {
-                    grunt.task.run(['notify']);
-                }
-            },
             sprite: {
                 files: (function () {
                     var i,
@@ -248,6 +243,13 @@ module.exports = function (grunt) {
             html: {
                 files: ['sources/site/**/*.*'],
                 tasks: ['copy:html', 'apply-templates:' + projectConfig.urls.basePathLocal, 'replace'],
+                options: {
+                    spawn: false
+                }
+            },
+            notify: {
+                files: ['sources/**/*.*'],
+                tasks: ['notify'],
                 options: {
                     spawn: false
                 }
@@ -398,6 +400,8 @@ module.exports = function (grunt) {
             to: basePath
         };
         grunt.config('replace', gruntConfig.replace);
+
+        tasks.push('notify');
 
         grunt.task.run(tasks);
 
