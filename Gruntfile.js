@@ -419,7 +419,7 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('production', 'Build the project with a production configs.', function (newBasePath) {
         productionEnabled = true;
-        grunt.task.run(['deploy:' + this.args.join(':')]);
+        grunt.task.run(['deploy:' + this.args.join(':'), 'to-root']);
         return newBasePath;
     });
 
@@ -436,5 +436,24 @@ module.exports = function (grunt) {
         var ip = os.networkInterfaces().en1[1].address,
             newBasePath = projectConfig.urls.basePathLocal.split('localhost').join(ip);
         grunt.task.run(['deploy:' + newBasePath]);
+    });
+
+    /* Copy the deploy files to root.
+     * $ grunt to-root
+     */
+    grunt.registerTask('to-root', 'Copy the deploy files to root.', function () {
+        var gruntConfigCopy = grunt.config('copy');
+        gruntConfigCopy.toRoot = {
+            files: [
+                {
+                    expand: true,
+                    cwd: 'deploy/',
+                    src: ['**/*.*'],
+                    dest: './'
+                }
+            ]
+        };
+        grunt.config('copy', gruntConfigCopy);
+        grunt.task.run(['copy:toRoot']);
     });
 };
