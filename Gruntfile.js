@@ -1,4 +1,5 @@
-/*jshint forin: true */
+/*globals window, this*/
+/*jshint forin: true, this: true, for:true, plusplus: true */
 module.exports = function (grunt) {
 
     "use strict";
@@ -18,11 +19,21 @@ module.exports = function (grunt) {
 
         sprite: projectConfig.sprites,
 
+        'http-server': {
+            dev: {
+                root: 'deploy/',
+                port: '8888',
+                showDir: true,
+                autoIndex: 'index.html',
+                ext: 'html'
+            }
+        },
+
         imagemin: {                          // Task
             static: {                          // Target
                 options: {                       // Target options
                     optimizationLevel: 3,
-                    svgoPlugins: [{ removeViewBox: false }]
+                    svgoPlugins: [{removeViewBox: false}]
                 },
                 files: [{
                     expand: true,
@@ -91,9 +102,10 @@ module.exports = function (grunt) {
         jslint: {
             client: {
                 src: [
-                    'Gruntfile.js',
                     'sources/assets/scripts/**/*.js',
-                    ((projectConfig.jslint.mainEnabled === true) ? '' : '!') + 'sources/assets/scripts/main.js',
+                    ((projectConfig.jslint.mainEnabled === true)
+                        ? ''
+                        : '!') + 'sources/assets/scripts/main.js',
                     '!sources/assets/scripts/plugins/**/*.js'
                 ],
                 directives: {
@@ -109,13 +121,15 @@ module.exports = function (grunt) {
                         'console',
                         'YT',
                         'setInterval',
-                        'clearInterval'
+                        'clearInterval',
+                        'this'
                     ]
                 },
                 options: {
                     regexp: false,
                     failOnError: true,
-                    forin: true
+                    forin: true,
+                    for: true
                 }
             }
         },
@@ -195,13 +209,10 @@ module.exports = function (grunt) {
         watch: {
             sprite: {
                 files: (function () {
-                    var i,
-                        arr = [];
-                    for (i in projectConfig.sprites) {
-                        if (projectConfig.sprites.hasOwnProperty(i)) {
-                            arr.push(projectConfig.sprites[i].src);
-                        }
-                    }
+                    var arr = [];
+                    Array.prototype.slice.call(projectConfig.sprites).every(function (sprite) {
+                        arr.push(sprite.src);
+                    });
                     if (arr.length === 0) {
                         return 'sources/assets/images/sprite/**/*.png';
                     }
@@ -269,22 +280,19 @@ module.exports = function (grunt) {
 
     function applyTemplate(fileObject) {
         var html = grunt.file.read('sources/site/' + fileObject.file),
-            i,
-            total = projectConfig.templateFiles.length,
             replaceObj;
 
         // Apply templates or code's include when needed
-        for (i = 0; i < total; i = i + 1) {
-            html = replaceStr(html, '{{{' + projectConfig.templateFiles[i] + '}}}', grunt.file.read(projectConfig.templateFiles[i]));
-        }
+        Array.prototype.slice.call(projectConfig.templateFiles).every(function (template) {
+            html = replaceStr(html, '{{{' + template + '}}}', grunt.file.read(template));
+        });
 
         // Replace {{{any ...}}} per object's array registers on page object at project-config.json
         if (fileObject.replace && fileObject.replace.length > 0) {
-            total = fileObject.replace.length;
-            for (i = 0; i < total; i = i + 1) {
-                replaceObj = fileObject.replace[i];
+            Array.prototype.slice.call(fileObject.replace).every(function (replaceStr) {
+                replaceObj = replaceStr;
                 html = replaceStr(html, '{{{' + replaceObj.find + '}}}', replaceObj.replace);
-            }
+            });
         }
 
         // production url
@@ -314,12 +322,9 @@ module.exports = function (grunt) {
      * $ grunt apply-templates
      */
     grunt.registerTask('apply-templates', 'Apply templates pushed to array "toApplyTemplate" setted on package.json with custom basePath', function () {
-        var i,
-            total = projectConfig.toApplyTemplate.length;
-
-        for (i = 0; i < total; i = i + 1) {
-            applyTemplate(projectConfig.toApplyTemplate[i]);
-        }
+        Array.prototype.slice.call(projectConfig.toApplyTemplate).every(function (toApplyTemplate) {
+            applyTemplate(toApplyTemplate);
+        });
     });
 
     /* Build the project with local basepath setted on package.json
@@ -411,7 +416,7 @@ module.exports = function (grunt) {
     /* Build the project with the local basepath and initialize the watch task
      * $ grunt w
      */
-    grunt.registerTask('w', ['deploy', 'watch']);
+    grunt.registerTask('w', ['deploy', 'http-server', 'watch']);
 
     /* Build the project with a production setup and a custom basepath
      * $ grunt production:http://cdn.htmltemplate.com.br
