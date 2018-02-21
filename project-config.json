@@ -22,8 +22,8 @@
         }
     },
     "urls": {
-        "basePathLocal": "http://localhost/html-template-project/deploy",
-        "baseUrlProduction": "http://www.html-template-project.com.br"
+        "basePathLocal": "",
+        "baseUrlProduction": ""
     },
     "sprites": {
         "spritesheet": {
