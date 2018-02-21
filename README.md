@@ -34,9 +34,6 @@ Antes de tudo, você precisará configurar o arquivo `project-config.json`:
 
 ```
 "title": "Título do projeto" // Substitui {{{site_title}}} do conteúdo da tag <title>{{{site_title}}}</title> nas páginas que não possuem título próprio.
-"jslint": {
-    "mainEnabled": false // Adiciona ou remove o main.js no jslint
-},
 "uglify": { // Quando o comando " $ grunt production" é utilizado, esses comandos não são respeitados, ficando false, true, true
     "beautify": true, // Quando true, identa o main.min.js
     "sourceMap": true, // Quando true, cria o *. file para leitura do console do browser
